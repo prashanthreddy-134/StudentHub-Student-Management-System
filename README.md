@@ -1,162 +1,216 @@
+# Student Management System
 
+A Python-based Student Management System built using Streamlit and SQLite. The application provides a simple web interface to manage student records and perform essential student management operations.
 
+## Project Overview
 
-StudentHub — Student Management System
-A practical Python internship project that demonstrates planning, database design, CRUD implementation, analytics, validation, testing considerations, and documentation in a real-world-style application.
+The Student Management System is designed to simplify student record management through a user-friendly web application. It uses Python for application logic, Streamlit for the frontend, and SQLite for database storage.
 
-Features
-Dashboard with student count, average marks, pass count, active courses, and quick summary
+The project also includes automated testing to verify database operations and support software quality assurance.
 
-Create, read, update, and delete student records
+## Features
 
-SQLite persistence (records remain after the app restarts)
+- Add and manage student records.
+- View student information.
+- Store student data using SQLite.
+- Interactive web interface built with Streamlit.
+- Persistent database storage.
+- Automated testing using pytest.
+- Modular application structure.
+- Local deployment.
 
-Search by student ID, name, email, phone, or course
+## Technologies Used
 
-Input validation and duplicate-email protection
+| Technology | Purpose |
+|---|---|
+| Python | Application development |
+| Streamlit | Web interface |
+| SQLite | Database management |
+| Pandas | Data processing |
+| Pytest | Automated testing |
+| Git | Version control |
+| GitHub | Source code hosting |
 
-Academic analytics: students by course, marks distribution, pass rate
+## Project Structure
 
-CSV export with a data preview
-
-Responsive Streamlit layout with a custom dark interface
-
-Technology Stack
-Python 3.10+
-
-Streamlit — application UI
-
-SQLite — persistent relational database
-
-Pandas — tabular data processing
-
-Plotly — interactive charts
-
-Project Structure
-StudentHub/
+```text
+Student_Management_System/
+│
 ├── app.py
+├── database.py
+├── students.db
+├── test_student.py
 ├── requirements.txt
 ├── README.md
 ├── .gitignore
-└── tests/
-    └── test_validation.py
-The SQLite database (studenthub.db) is created automatically when the app first runs. It is intentionally excluded from Git because it contains runtime data.
+└── .venv/
+```
 
-Setup
-Windows (PowerShell)
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-streamlit run app.py
-If PowerShell blocks activation, run the app using:
+**File descriptions:**
 
-.\.venv\Scripts\python.exe -m streamlit run app.py
-Open the local URL printed by Streamlit, usually http://localhost:8501.
+- `app.py` — Main Streamlit application.
+- `database.py` — Database connection and student data operations.
+- `students.db` — SQLite database containing student records.
+- `test_student.py` — Automated tests for the project.
+- `requirements.txt` — Python dependencies.
+- `README.md` — Project documentation.
+- `.gitignore` — Files and directories excluded from Git.
 
-Database Design
-Table: students
+## Installation and Setup
 
-Column	Type	Rules
-id	INTEGER	Primary key, auto-increment
-full_name	TEXT	Required
-email	TEXT	Required, unique, case-insensitive
-phone	TEXT	Optional
-course	TEXT	Required
-marks	REAL	Required, between 0 and 100
-created_at	TEXT	Record creation timestamp
-updated_at	TEXT	Last update timestamp
-All database writes use parameterized SQL statements. The database enforces uniqueness and marks constraints in addition to application-level validation.
+### 1. Clone the repository
 
-Functional Requirements
-The application shall create a student record with a name, email, course, marks, and optional phone.
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd Student_Management_System
+```
 
-The application shall display all student records and support text search.
+Replace `YOUR_GITHUB_REPOSITORY_URL` with your actual GitHub repository URL.
 
-The application shall update an existing student's details.
+### 2. Create a virtual environment
 
-The application shall require explicit confirmation before deletion.
+```bash
+python -m venv .venv
+```
 
-The dashboard shall calculate key student and academic metrics from stored records.
+### 3. Activate the virtual environment
 
-The analytics page shall visualize course counts and marks distribution.
+**Windows PowerShell:**
 
-The application shall export records as a UTF-8 CSV file.
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
-Invalid input and duplicate email addresses shall produce understandable errors.
+**Linux / Ubuntu:**
 
-Architecture
-The app is organized into three logical layers in one deployable Streamlit module:
+```bash
+source .venv/bin/activate
+```
 
-Presentation: Streamlit pages, forms, navigation, metrics, tables, and charts.
+### 4. Install dependencies
 
-Application logic: input validation and CRUD functions.
+```bash
+python -m pip install -r requirements.txt
+```
 
-Persistence: SQLite connection and parameterized SQL operations.
+### 5. Run the application
 
-For a larger production system, these layers can be separated into modules and authentication, authorization, audit logging, migrations, and automated deployment can be added.
+```bash
+python -m streamlit run app.py
+```
 
-Testing Checklist
-Add a valid student and verify that the record appears on the dashboard and records page.
+Open the following URL in your browser:
 
-Try an invalid email and verify that the record is rejected.
+```text
+http://localhost:8501
+```
 
-Add the same email twice (including different letter casing) and verify duplicate protection.
+## Testing and Quality Assurance
 
-Try marks below 0 or above 100 and verify the input is constrained.
+The project includes automated testing using pytest to verify application functionality and database operations.
 
-Search using a name, email, course, phone, and student ID.
+### Testing Framework
 
-Update a record and verify that the changes persist after refreshing.
+- **Framework:** Pytest
+- **Test file:** `test_student.py`
+- **Purpose:** Verify application and database functionality.
+- **Testing approach:** Automated unit testing.
 
-Attempt deletion without checking confirmation; verify deletion is disabled.
+### Run the tests
 
-Confirm deletion and verify that the record disappears.
+Install pytest if it is not already installed:
 
-Test analytics with no records, one record, and multiple records.
+```bash
+python -m pip install pytest
+```
 
-Export CSV and open it to verify headers and values.
+Run the test suite:
 
-Stop and restart Streamlit; verify records remain in SQLite.
+```bash
+python -m pytest -v
+```
 
-Run the included validation tests with:
+### Testing Results
 
-python -m unittest discover -s tests -v
-Known Scope / Limitations
-This is a local internship project, not a production student information system.
+Test execution results should be recorded after running the test suite.
 
-There is no login or role-based access control.
+| Testing Activity | Status |
+|---|---|
+| Test file created | Completed |
+| Automated test execution | Run using pytest |
+| Test results | Update after execution |
+| Application testing | Verify locally |
+| Database testing | Verify using automated tests |
 
-Phone numbers are stored as text to preserve leading zeros and optional formatting.
+**Note:** Update this section with the actual number of tests passed, failed, or skipped after executing the test suite.
 
-The pass threshold is currently set to 40 marks and can be changed in app.py.
+## Software Quality Assurance
 
-The app does not include attendance, fees, or assignment workflows.
+The project follows basic software quality assurance practices:
 
-GitHub
-Create an empty GitHub repository named StudentHub-Student-Management-System, then run these commands from this project folder:
+1. **Functional Testing:** Verify that the application performs its intended student management operations.
+2. **Database Testing:** Check database operations and student record handling.
+3. **Automated Testing:** Use pytest to execute repeatable tests.
+4. **Code Organization:** Separate application logic and database operations into different Python files.
+5. **Version Control:** Use Git to track changes and GitHub to maintain the project repository.
+6. **Documentation:** Maintain installation, execution, and testing instructions in this README.
 
-git init
-git add .
-git commit -m "Build StudentHub practical implementation project"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/StudentHub-Student-Management-System.git
-git push -u origin main
-Replace YOUR-USERNAME with your GitHub username. Do not commit .venv/, studenthub.db, secrets, or personal student data.
+## Version Control and GitHub
 
-Project Presentation
-Suggested demo flow:
+Git is used to manage project versions and track source code changes. GitHub is used to host the project and maintain its development history.
 
-Explain the problem and the project objectives.
+To upload the latest changes:
 
-Show the dashboard and database-backed records.
+```bash
+git add app.py database.py test_student.py requirements.txt README.md .gitignore
+git commit -m "Update testing and project documentation"
+git push origin main
+```
 
-Register a student, search for the record, and update it.
+## Running the Project in Ubuntu (WSL)
 
-Demonstrate the deletion confirmation.
+The project can also be executed using Windows Subsystem for Linux (WSL).
 
-Show course and marks analytics.
+```bash
+cd ~/Student_Management_System
+source .venv/bin/activate
+python3 -m streamlit run app.py
+```
 
-Export a CSV and explain the SQLite schema.
+Open the application at:
 
-Discuss validation, edge cases, and future improvements.
+```text
+http://localhost:8501
+```
+
+## Learning Outcomes
+
+This project provides practical experience in:
+
+- Python application development.
+- Building interactive web applications with Streamlit.
+- Database integration using SQLite.
+- Writing automated tests using pytest.
+- Managing project dependencies.
+- Applying basic software testing and quality assurance practices.
+- Using Git and GitHub for version control and project submission.
+
+## Future Enhancements
+
+- Add student search and filtering.
+- Introduce role-based authentication.
+- Add student attendance management.
+- Generate student reports.
+- Improve input validation and error handling.
+- Expand automated test coverage.
+
+## Author
+
+**Prashanth Reddy S**
+
+Information Science and Engineering Student  
+Brindavan College of Engineering, Bengaluru
+
+## License
+
+This project is developed for educational and internship purposes.
