@@ -283,7 +283,7 @@ if page == "Dashboard":
         if not df.empty:
             st.dataframe(
                 df.head(5),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
             )
         else:
