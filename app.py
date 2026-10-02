@@ -256,7 +256,7 @@ with st.sidebar:
     st.markdown(
         "**🚀 Python Developer Internship**"
     )
-    st.caption("Week 3 | Practical Project")
+    st.caption("Python Developer Internship | Deployment & Production")
 
     st.divider()
 
