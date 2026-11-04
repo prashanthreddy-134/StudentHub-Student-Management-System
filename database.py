@@ -1,99 +1,84 @@
 import sqlite3
+from pathlib import Path
 
-DB_NAME = "students.db"
+import os
+
+DB_NAME = os.getenv("STUDENTHUB_DB_PATH", "students.db")
 
 
 def get_connection():
-    return sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(
+        DB_NAME,
+        timeout=10,
+        check_same_thread=False
+    )
+    conn.execute("PRAGMA busy_timeout = 10000")
+    return conn
 
 
 def create_table():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT,
-            course TEXT NOT NULL,
-            marks REAL DEFAULT 0
-        )
-    """)
-
-    conn.commit()
-    conn.close()
+    with get_connection() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS students (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                phone TEXT,
+                course TEXT NOT NULL,
+                marks REAL DEFAULT 0
+            )
+        """)
 
 
 def add_student(name, email, phone, course, marks):
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("""
-            INSERT INTO students
-            (name, email, phone, course, marks)
-            VALUES (?, ?, ?, ?, ?)
-        """, (name, email, phone, course, marks))
+        with get_connection() as conn:
+            conn.execute("""
+                INSERT INTO students
+                (name, email, phone, course, marks)
+                VALUES (?, ?, ?, ?, ?)
+            """, (name, email, phone, course, marks))
 
-        conn.commit()
         return True
 
     except sqlite3.IntegrityError:
         return False
 
-    finally:
-        conn.close()
-
 
 def get_students():
-    conn = get_connection()
-
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM students ORDER BY id DESC")
-
-    students = cursor.fetchall()
-    conn.close()
-
-    return students
+    with get_connection() as conn:
+        return conn.execute("""
+            SELECT id, name, email, phone, course, marks
+            FROM students
+            ORDER BY id DESC
+        """).fetchall()
 
 
 def update_student(student_id, name, email, phone, course, marks):
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("""
-            UPDATE students
-            SET name=?, email=?, phone=?, course=?, marks=?
-            WHERE id=?
-        """, (name, email, phone, course, marks, student_id))
+        with get_connection() as conn:
+            cursor = conn.execute("""
+                UPDATE students
+                SET name=?, email=?, phone=?, course=?, marks=?
+                WHERE id=?
+            """, (
+                name, email, phone, course, marks, student_id
+            ))
 
-        conn.commit()
-        return cursor.rowcount > 0
+            return cursor.rowcount > 0
 
     except sqlite3.IntegrityError:
         return False
 
-    finally:
-        conn.close()
-
 
 def delete_student(student_id):
-    conn = get_connection()
-    cursor = conn.cursor()
+    with get_connection() as conn:
+        cursor = conn.execute(
+            "DELETE FROM students WHERE id=?",
+            (student_id,)
+        )
 
-    cursor.execute(
-        "DELETE FROM students WHERE id=?",
-        (student_id,)
-    )
-
-    conn.commit()
-    deleted = cursor.rowcount > 0
-    conn.close()
-
-    return deleted
+        return cursor.rowcount > 0
 
 
 create_table()
